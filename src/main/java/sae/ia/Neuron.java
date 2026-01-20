@@ -1,3 +1,5 @@
+package sae.ia;
+
 class Neuron {
     public double    Value;
     public double[]  Weights;

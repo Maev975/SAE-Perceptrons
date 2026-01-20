@@ -1,3 +1,6 @@
+package sae.ia;
+
+
 interface TransferFunction  {
     /**
      * Function de transfert

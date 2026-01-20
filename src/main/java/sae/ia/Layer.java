@@ -1,3 +1,5 @@
+package sae.ia;
+
 class Layer {
     public Neuron Neurons[];
     public int 	  Length;

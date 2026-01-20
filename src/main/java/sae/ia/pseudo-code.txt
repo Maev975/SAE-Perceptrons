@@ -1,0 +1,1 @@
+contructeur MLP (nombre de couches cachées, pas d'apprentissage, )

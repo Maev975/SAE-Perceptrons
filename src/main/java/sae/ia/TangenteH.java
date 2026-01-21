@@ -10,7 +10,7 @@ public class TangenteH implements TransferFunction {
 
     @Override
     public double evaluateDer(double value) {
-        double sigmader = 1- value*value;
+        double sigmader = 1- Math.pow(evaluate(value),2);
         return sigmader;
     }
 

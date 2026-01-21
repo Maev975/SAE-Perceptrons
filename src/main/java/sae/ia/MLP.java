@@ -108,6 +108,32 @@ public class MLP {
 	}
 
 	/**
+	 * Fonction d'apprentissage
+	 * @param nbIteration nombre d'itération dans cette phase d'apprentissage
+	 * @param donnee données d'entrées représentant une ligne de la table de la vérité
+	 */
+	public double apprentissage(int nbIteration, double[] donnee){
+		double erreurMoy = 0.0;
+
+		double[] input  = new double[getInputLayerSize()];
+		double[] output = new double[getOutputLayerSize()];
+
+		for(int i = 0; i < getInputLayerSize(); i++){
+			input[i] = donnee[i];
+		}
+
+		for(int i = 0; i < getOutputLayerSize(); i++){
+			output[i] = donnee[getInputLayerSize() + i];
+		}
+
+		for (int i = 0; erreurMoy >= 0.2 ||  i < nbIteration; i++) {
+			erreurMoy = backPropagate(input, output);
+		}
+
+		return erreurMoy;
+	}
+
+	/**
 	 * @return LearningRate
 	 */
 	public double getLearningRate() {

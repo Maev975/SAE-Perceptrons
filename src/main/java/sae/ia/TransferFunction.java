@@ -1,7 +1,7 @@
 package sae.ia;
 
 
-interface TransferFunction  {
+public interface TransferFunction  {
     /**
      * Function de transfert
      * @param value entrée

@@ -5,9 +5,11 @@ package sae.ia;
 public class Main {
     static void main() {
 
-        int[] layer = new int[2];
+        int[] layer = new int[3];
         layer[0] = 2;
-        layer[1] = 1;
+        layer[1] = 2;
+        layer[2] = 1;
+
 
         double[] ou1 = new double[]{0.0, 1.0, 1.0};
         double[] ou2 = new double[]{1.0, 0.0, 1.0};
@@ -42,12 +44,30 @@ public class Main {
         tableXOR[2] = xor3;
         tableXOR[3] = xor4;
 
+        double[][] inputs = new double[4][2];
+        double[] input1 = new double[]{0,0};
+        double[] input2 = new double[]{0,1};
+        double[] input3 = new double[]{1,0};
+        double[] input4 = new double[]{1,1};
+
+        inputs[0] = input1;
+        inputs[1] = input2;
+        inputs[2] = input3;
+        inputs[3] = input4;
+
+
         double seuil = 0.01;
-        TransferFunction transferFunction = new Sigmoide();
+        TransferFunction transferFunction = new TangenteH();
         MLP mlp = new MLP(layer, 0.01, transferFunction);
-        for (double[] current : tableXOR) {
-            System.out.println(mlp.apprentissage(500, current, seuil));
-            System.out.println("Execute sur " + current[0] + " ; " + current[1] + " ; " + current[2] + " : " + mlp.execute(current)[0]);
+        for(int i = 0; i < 500; i++){
+            for (double[] current : tableXOR) {
+                System.out.println(mlp.apprentissage(500, current, seuil));
+            }
+        }
+
+
+        for(double[] input : inputs){
+            System.out.println("Execute sur " + input[0] + " ; " + input[1] + " : " + mlp.execute(input)[0]);
         }
     }
 }

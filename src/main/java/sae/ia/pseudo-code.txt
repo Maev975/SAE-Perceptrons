@@ -1,1 +1,19 @@
-contructeur MLP (nombre de couches cachées, pas d'apprentissage, )
+//Créer le perceptron avec toute la configuration
+fonction = Tanh
+perceptron = MLP(couches, taux d’apprentissage, fonction)
+
+apprendre()
+
+//Fonction permettant l’apprentissage
+fonction apprendre(nombre d’itérations, données)
+	pour i de 1 à iterations faire
+		erreur moyenne <- 0
+		pour chaque exemple de donnees faire
+			entree = exemple.input
+			sortie = exemple.output
+			erreur = erreur + perceptron.backpropagate(entree, sortie)
+			erreur moyenne += erreur
+		fin pour
+		erreur moyenne = erreur moyenne / taille(données)
+	fin pour
+fin

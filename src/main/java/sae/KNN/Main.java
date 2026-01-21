@@ -11,14 +11,14 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Imagette[] tab = ChargementMNIST.charger("train-images.idx3-ubyte", "train-labels.idx1-ubyte", 2);
+        Imagette[] tab = ChargementMNIST.charger("src/main/java/sae/KNN/train-images.idx3-ubyte", "src/main/java/sae/KNN/train-labels.idx1-ubyte", 2);
 
         tab[0].sauverImage("test0.png");
         tab[1].sauverImage("test1.png");
         //System.out.println( tab[0].getLabel());
 
-        Donnees train = new Donnees("train-images.idx3-ubyte", "train-labels.idx1-ubyte");
-        Donnees test = new Donnees("t10k-images.idx3-ubyte", "t10k-labels.idx1-ubyte");
+        Donnees train = new Donnees("src/main/java/sae/KNN/train-images.idx3-ubyte", "src/main/java/sae/KNN/train-labels.idx1-ubyte");
+        Donnees test = new Donnees("src/main/java/sae/KNN/t10k-images.idx3-ubyte", "src/main/java/sae/KNN/t10k-labels.idx1-ubyte");
 
         // Création de l’algorithme PlusProche
         AlgoClassification algo = new KNN(train,5);

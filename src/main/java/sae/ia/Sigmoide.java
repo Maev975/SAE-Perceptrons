@@ -8,7 +8,7 @@ public class Sigmoide implements TransferFunction {
     }
 
     public double evaluateDer(double value) {
-         double derO = value - Math.pow(value, 2) ;
+         double derO = evaluate(value) - Math.pow(evaluate(value), 2) ;
          return derO;
     }
 

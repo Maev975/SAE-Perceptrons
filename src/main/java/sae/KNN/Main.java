@@ -1,9 +1,11 @@
-import Algo.AlgoClassification;
-import Algo.KNN;
-import Stats.Statistiques;
-import chargement.ChargementMNIST;
-import chargement.Donnees;
-import chargement.Imagette;
+package sae.KNN;
+
+import sae.KNN.Algo.AlgoClassification;
+import sae.KNN.Algo.KNN;
+import sae.KNN.Stats.Statistiques;
+import sae.KNN.chargement.ChargementMNIST;
+import sae.KNN.chargement.Donnees;
+import sae.KNN.chargement.Imagette;
 
 import java.io.IOException;
 

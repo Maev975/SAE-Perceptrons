@@ -1,7 +1,7 @@
-package Algo;
+package sae.KNN.Algo;
 
-import chargement.Donnees;
-import chargement.Imagette;
+import sae.KNN.chargement.Donnees;
+import sae.KNN.chargement.Imagette;
 
 /**
  * Algorithme du plus proche voisin :

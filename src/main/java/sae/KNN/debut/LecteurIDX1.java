@@ -1,4 +1,4 @@
-package debut;
+package sae.KNN.debut;
 
 import java.io.*;
 

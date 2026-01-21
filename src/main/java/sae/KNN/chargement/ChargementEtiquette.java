@@ -1,6 +1,8 @@
-package chargement;
+package sae.KNN.chargement;
 
 import java.io.IOException;
+
+import sae.KNN.debut.LecteurIDX1;
 
 public class ChargementEtiquette {
     /**
@@ -11,6 +13,6 @@ public class ChargementEtiquette {
      * @throws IOException probleme de lecture
      */
     public static int[] charger(String labelFile, int max) throws IOException {
-        return debut.LecteurIDX1.lireFichierLabels(labelFile);
+        return LecteurIDX1.lireFichierLabels(labelFile);
     }
 }

@@ -1,4 +1,4 @@
-package chargement;
+package sae.KNN.chargement;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

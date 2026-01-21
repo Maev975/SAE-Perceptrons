@@ -1,8 +1,8 @@
-package Stats;
+package sae.KNN.Stats;
 
-import Algo.AlgoClassification;
-import chargement.Donnees;
-import chargement.Imagette;
+import sae.KNN.Algo.AlgoClassification;
+import sae.KNN.chargement.Donnees;
+import sae.KNN.chargement.Imagette;
 
 public class Statistiques {
 

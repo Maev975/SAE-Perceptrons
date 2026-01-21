@@ -1,4 +1,4 @@
-package debut;
+package sae.KNN.debut;
 
 public class Imagette {
     private int[][] pixels;

@@ -26,13 +26,13 @@ public class Main {
         int[] layer = new int[3];
         layer[0] = 2;
         layer[1] = 2;
-        layer[2] = 1;
+        layer[2] = 2;
 
 
-        double[] ou1 = new double[]{0.0, 1.0, 1.0};
-        double[] ou2 = new double[]{1.0, 0.0, 1.0};
-        double[] ou3 = new double[]{0.0, 0.0, 0.0};
-        double[] ou4 = new double[]{1.0, 1.0, 1.0};
+        double[] ou1 = new double[]{0.0, 1.0, 0.0,1.0};
+        double[] ou2 = new double[]{1.0, 0.0, 0.0,1.0};
+        double[] ou3 = new double[]{0.0, 0.0, 1.0,0.0};
+        double[] ou4 = new double[]{1.0, 1.0, 0.0,1.0};
 
         double[][] tableOU = new double[4][];
         tableOU[0] = ou1;
@@ -40,10 +40,10 @@ public class Main {
         tableOU[2] = ou3;
         tableOU[3] = ou4;
 
-        double[] et1 = new double[]{0.0, 1.0, 0.0};
-        double[] et2 = new double[]{1.0, 0.0, 0.0};
-        double[] et3 = new double[]{0.0, 0.0, 0.0};
-        double[] et4 = new double[]{1.0, 1.0, 1.0};
+        double[] et1 = new double[]{0.0, 1.0,1.0, 0.0};
+        double[] et2 = new double[]{1.0, 0.0,1.0, 0.0};
+        double[] et3 = new double[]{0.0, 0.0,1.0, 0.0};
+        double[] et4 = new double[]{1.0, 1.0,0.0, 1.0};
 
         double[][] tableET = new double[4][];
         tableET[0] = et1;
@@ -51,10 +51,10 @@ public class Main {
         tableET[2] = et3;
         tableET[3] = et4;
 
-        double[] xor1 = new double[]{0.0, 1.0, 1.0};
-        double[] xor2 = new double[]{1.0, 0.0, 1.0};
-        double[] xor3 = new double[]{0.0, 0.0, 0.0};
-        double[] xor4 = new double[]{1.0, 1.0, 0.0};
+        double[] xor1 = new double[]{0.0, 1.0, 0.0,1.0};
+        double[] xor2 = new double[]{1.0, 0.0, 0.0,1.0};
+        double[] xor3 = new double[]{0.0, 0.0,1.0, 0.0};
+        double[] xor4 = new double[]{1.0, 1.0,1.0, 0.0};
 
         double[][] tableXOR = new double[4][];
         tableXOR[0] = xor1;
@@ -83,7 +83,11 @@ public class Main {
 
 
         for(double[] input : inputs){
-            System.out.println("Execute sur " + input[0] + " ; " + input[1] + " : " + mlp.execute(input)[0]);
+            double[] res = mlp.execute(input);
+            System.out.println(
+                    "Execute sur " + input[0] + " ; " + input[1] +
+                            " : [" + res[0] + ", " + res[1] + "]"
+            );
         }
     }
 }

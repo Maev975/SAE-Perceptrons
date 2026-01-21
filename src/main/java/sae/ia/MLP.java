@@ -112,34 +112,34 @@ public class MLP {
 	 * @param nbIteration nombre d'itération dans cette phase d'apprentissage
 	 * @param donnee données d'entrées représentant une ligne de la table de la vérité
 	 */
-	public double apprentissage(int nbIteration, double[][] donnee, double seuil){
-		double erreurMoy = 0.0;
+    public double apprentissage(int nbIteration, double[][] donnee, double seuil){
+        double erreurMoy = Double.MAX_VALUE;
 
-		double[] input  = new double[getInputLayerSize()];
-		double[] output = new double[getOutputLayerSize()];
+        double[] input  = new double[getInputLayerSize()];
+        double[] output = new double[getOutputLayerSize()];
 
-		for (int k = 0; erreurMoy >= seuil &&  k < nbIteration; k++) {
-			erreurMoy = 0.0;
+        for (int k = 0; erreurMoy >= seuil &&  k < nbIteration; k++) {
+            erreurMoy = 0.0;
 
-			for(int i = 0; i < donnee.length; i++){
-				double[] currentLigne = donnee[i];
-				for(int j = 0; j < getInputLayerSize(); j++){
-					input[j] = currentLigne[j];
-				}
+            for(int i = 0; i < donnee.length; i++){
+                double[] currentLigne = donnee[i];
+                for(int j = 0; j < getInputLayerSize(); j++){
+                    input[j] = currentLigne[j];
+                }
 
-				for(int j = 0; j < getOutputLayerSize(); j++){
-					output[j] = currentLigne[getInputLayerSize() + j];
-				}
-				erreurMoy += backPropagate(input, output);
+                for(int j = 0; j < getOutputLayerSize(); j++){
+                    output[j] = currentLigne[getInputLayerSize() + j];
+                }
+                erreurMoy += backPropagate(input, output);
 
-			}
-			erreurMoy /= donnee.length;
+            }
+            erreurMoy /= donnee.length;
 
-		}
+        }
 
 
-		return erreurMoy;
-	}
+        return erreurMoy;
+    }
 
 	/**
 	 * @return LearningRate

@@ -1,27 +1,7 @@
 package sae.ia;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     static void main() {
-
-        //Test des fonctions
-
-        TransferFunction testFunction = new Sigmoide();
-        double[] inputFunctionTest = new double[]{-1.0,-0.5,0.0,0.5,1.0};
-        for(int i = 0; i < inputFunctionTest.length; i++){
-            System.out.println("fonc val : " + inputFunctionTest[i] + " res : " + testFunction.evaluate(inputFunctionTest[i]));
-            System.out.println("fonc der val : " + inputFunctionTest[i] + " res : " + testFunction.evaluateDer(inputFunctionTest[i]));
-        }
-
-        TransferFunction testFunction2 = new TangenteH();
-        for(int i = 0; i < inputFunctionTest.length; i++){
-            System.out.println("fonc val : " + inputFunctionTest[i] + " res : " + testFunction2.evaluate(inputFunctionTest[i]));
-            System.out.println("fonc der val : " + inputFunctionTest[i] + " res : " + testFunction2.evaluateDer(inputFunctionTest[i]));
-        }
-
-
-
 
         int[] layer = new int[3];
         layer[0] = 2;
@@ -78,7 +58,7 @@ public class Main {
         TransferFunction transferFunction = new Sigmoide();
         MLP mlp = new MLP(layer, 0.01, transferFunction);
 
-        //Apprentissage, 500 itérations par ligne ds la table de vérité
+        //Apprentissage
         mlp.apprentissage(100000, tableXOR, seuil);
 
 

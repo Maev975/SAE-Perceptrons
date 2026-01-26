@@ -33,7 +33,8 @@ public class TestFonction {
         double[] expected = new double[]{0.19661,0.235,0.25,0.235,0.19661};
         double[] res = new double[5];
         for(int i = 0; i < input.length; i++){
-            res[i] = transferFunction.evaluateDer(input[i]);
+            double ev = transferFunction.evaluate(input[i]);
+            res[i] = transferFunction.evaluateDer(ev);
         }
         assertAll(
                 () -> assertEquals(expected[0], res[0],0.1),
@@ -67,7 +68,8 @@ public class TestFonction {
         double[] expected = new double[]{0.41997 ,0.78645,1,0.78645,0.41997 };
         double[] res = new double[5];
         for(int i = 0; i < input.length; i++){
-            res[i] = transferFunction.evaluateDer(input[i]);
+            double ev = transferFunction.evaluate(input[i]);
+            res[i] = transferFunction.evaluateDer(ev);
         }
         assertAll(
                 () -> assertEquals(expected[0], res[0],0.1),

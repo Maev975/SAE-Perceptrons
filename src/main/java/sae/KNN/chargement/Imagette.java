@@ -150,4 +150,7 @@ public class Imagette {
         this.colonnes = colonnes;
     }
 
+    public int[][] getTab(){
+        return this.tab;
+    }
 }

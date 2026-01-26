@@ -1,5 +1,8 @@
 package sae.ia;
 
+import sae.KNN.chargement.Donnees;
+import sae.KNN.chargement.Imagette;
+
 public class MLP {
 	protected double fLearningRate = 0.6;
 	protected Layer[] fLayers;
@@ -122,7 +125,7 @@ public class MLP {
             erreurMoy = 0.0;
 
             for(int i = 0; i < donnee.length; i++){
-                double[] currentLigne = donnee[i];
+				double[] currentLigne = donnee[i];
                 for(int j = 0; j < getInputLayerSize(); j++){
                     input[j] = currentLigne[j];
                 }
@@ -140,6 +143,44 @@ public class MLP {
 
         return erreurMoy;
     }
+
+
+	/**
+	 * Fonction d'apprentissage
+	 * @param nbIteration nombre d'itération dans cette phase d'apprentissage
+	 * @param donnee données d'entrées représentant une ligne de la table de la vérité
+	 */
+	public double apprentissageImg(int nbIteration, Donnees donnee, double seuil){
+		double erreurMoy = Double.MAX_VALUE;
+		Imagette[] imagettes = donnee.getImagettes();
+		double[] input  = new double[getInputLayerSize()];
+		double[] output = new double[getOutputLayerSize()];
+
+		for (int k = 0; erreurMoy >= seuil &&  k < nbIteration; k++) {
+			erreurMoy = 0.0;
+
+			for(int i = 0; i < imagettes.length; i++){
+				int[][] currentImg = imagettes[i].getTab();
+				int idx = 0;
+
+				for(int x = 0; x < currentImg.length; x++){
+					for(int y = 0; y < currentImg[x].length; y++) {
+//						int currentPixel = imagettes[i].getTab()[x][y];
+						input[idx++] = currentImg[x][y] / 255.0;
+					}
+				}
+
+				int label = imagettes[i].getLabel();
+				for (int j = 0; j < getOutputLayerSize(); j++) {
+					output[j] = 0.0;
+				}
+				output[label] = 1.0;
+				erreurMoy += backPropagate(input, output);
+			}
+			erreurMoy /= imagettes.length;
+		}
+		return erreurMoy;
+	}
 
 	/**
 	 * @return LearningRate

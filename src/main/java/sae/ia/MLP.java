@@ -182,6 +182,49 @@ public class MLP {
 		return erreurMoy;
 	}
 
+
+    /**
+     * prédit le chiffre (0-9)
+     */
+    public int predict(double[] input) {
+        double[] outputs = execute(input);
+        int maxIndex = 0;
+        for (int i = 1; i < outputs.length; i++) {
+            if (outputs[i] > outputs[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    /**
+     *taux de réussite
+     */
+    public double evaluer(Donnees testData) {
+        Imagette[] images = testData.getImagettes();
+        int correct = 0;
+        for (Imagette img : images) {
+            double[] input = flatten(img);
+            if (predict(input) == img.getLabel()) {
+                correct++;
+            }
+        }
+        return (double) correct / images.length * 100.0;
+    }
+
+    // Méthode utilitaire interne pour aplatir l'image
+    private double[] flatten(Imagette image) {
+        int[][] img = image.getTab();
+        double[] input = new double[img.length * img[0].length];
+        int k = 0;
+        for (int x = 0; x < img.length; x++) {
+            for (int y = 0; y < img[x].length; y++) {
+                input[k++] = img[x][y] / 255.0;
+            }
+        }
+        return input;
+    }
+
 	/**
 	 * @return LearningRate
 	 */

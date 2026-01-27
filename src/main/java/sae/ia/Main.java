@@ -18,12 +18,16 @@ public class Main {
     private static final int NB_TRAIN_KNN = 10000;
 
     // Données de test
-    private static final int NB_TEST = 100;
+    private static final int NB_TEST = 1000;
 
     // MLP
-    private static final int NB_TRAIN_MLP = 10000;
+    private static final int NB_TRAIN_MLP = 5000;
     private static final double LEARNING_RATE = 0.01;
     private static final int[] COUCHES_MLP = {784,64, 10};
+
+    // Nombre d'itération
+    private static final int NB_IT = 50;
+    
 
     public static void main(String[] args) {
         String mode = (args.length > 0) ? args[0].toLowerCase() : MODE_DEFAUT;
@@ -73,7 +77,7 @@ public class Main {
     public static void executerMLP() throws IOException {
         System.out.println("=== MODE : MLP (Sigmoide) ===");
 
-        Donnees train = new Donnees("src/main/java/sae/KNN/train-images.idx3-ubyte","src/main/java/sae/KNN/train-labels.idx1-ubyte");
+        Donnees train = new Donnees("src/main/java/sae/KNN/train-images.idx3-ubyte","src/main/java/sae/KNN/train-labels.idx1-ubyte",NB_TRAIN_MLP);
         Imagette[] testImages = ChargementMNIST.charger("src/main/java/sae/KNN/t10k-images.idx3-ubyte","src/main/java/sae/KNN/t10k-labels.idx1-ubyte",NB_TEST);
 
         MLP mlp = new MLP(COUCHES_MLP, LEARNING_RATE, new Sigmoide());
@@ -81,7 +85,7 @@ public class Main {
         long startTime = System.currentTimeMillis();
 
         System.out.println("Apprentissage (" + NB_TRAIN_MLP + " images)...");
-        mlp.apprentissageImg(NB_TRAIN_MLP, train, LEARNING_RATE);
+        mlp.apprentissageImg(NB_IT, train, LEARNING_RATE);
 
         System.out.println("Evaluation base de test ...");
         int reussites = 0;

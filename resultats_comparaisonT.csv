@@ -1,0 +1,3 @@
+TailleTrain;Algo;Parametre;TauxReussite;TempsApprentissageMS;TempsPredictionMS
+5000;MLP;128_caches;71.88;2844;57
+5000;KNN;k=1;91.08;0;24825

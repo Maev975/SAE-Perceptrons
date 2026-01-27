@@ -7,6 +7,8 @@ import sae.KNN.chargement.Imagette;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
+
 
 public class MainCSV {
 
@@ -22,46 +24,72 @@ public class MainCSV {
 
         String csvFile = "resultats_comparaison.csv";
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(csvFile))) {
+        System.out.println("début");
 
-            writer.println("TailleTrain;Algo;Parametre;tauxR;TempsMS");
+        try (PrintWriter writer = new PrintWriter(new FileWriter(csvFile))) {
+            writer.println("TailleTrain;Algo;Parametre;TauxReussite;TempsApprentissageMS;TempsPredictionMS");
 
             for (int nbTrain : taillesEntrainement) {
-                System.out.println("\nTest avec " + nbTrain + " images d'entrainement");
+                System.out.println("Test avec " + nbTrain + "images d'entrainement");
 
                 Donnees trainData = new Donnees(PATH_TRAIN_IMG, PATH_TRAIN_LBL, nbTrain);
                 Donnees testData = new Donnees(PATH_TEST_IMG, PATH_TEST_LBL, nbTest);
 
                 //MLP
+                System.out.print("MLP en cours");
                 int neuronesCaches = 128;
                 MLP mlp = new MLP(new int[]{784, neuronesCaches, 10}, 0.1, new Sigmoide());
 
-                long t0 = System.currentTimeMillis();
+                //temps apprentissage
+                long t0_MLP = System.currentTimeMillis();
                 mlp.apprentissageImg(30, trainData, 0.001);
-                long t1 = System.currentTimeMillis();
+                long t1_MLP = System.currentTimeMillis();
+                long tempsAppMLP = t1_MLP - t0_MLP;
 
+                //temps prédiction
+                long t2_MLP = System.currentTimeMillis();
                 double accMLP = mlp.evaluer(testData);
-                writer.println(nbTrain + ";MLP;" + neuronesCaches + "hidden;" + accMLP + ";" + (t1 - t0));
-                System.out.println("MLP terminé: " + accMLP + "%");
+                long t3_MLP = System.currentTimeMillis();
+                long tempsPredMLP = t3_MLP - t2_MLP;
+
+                writer.printf(Locale.US, "%d;MLP;%d_caches;%.2f;%d;%d\n",
+                        nbTrain, neuronesCaches, accMLP, tempsAppMLP, tempsPredMLP);
+                System.out.println("Terminé (Acc: " + accMLP + "%)");
 
                 //knn
+                System.out.print("KNN en cours... ");
                 int k = 3;
-                long t2 = System.currentTimeMillis();
+
+                //temps apprentissage donc presque null
+                long t0_KNN = System.currentTimeMillis();
                 KNN knn = new KNN(trainData, k);
+                long t1_KNN = System.currentTimeMillis();
+                long tempsAppKNN = t1_KNN - t0_KNN;
 
+                //prédiction
+                long t2_KNN = System.currentTimeMillis();
                 int correct = 0;
-                for (Imagette im : testData.getImagettes()) {
-                    if (knn.predire(im) == im.getLabel()) correct++;
+                Imagette[] imagesTest = testData.getImagettes();
+                for (Imagette im : imagesTest) {
+                    if (knn.predire(im) == im.getLabel()) {
+                        correct++;
+                    }
                 }
-                long t3 = System.currentTimeMillis();
-
+                long t3_KNN = System.currentTimeMillis();
+                long tempsPredKNN = t3_KNN - t2_KNN;
                 double accKNN = (double) correct / nbTest * 100.0;
-                writer.println(nbTrain + ";KNN;k=" + k + ";" + accKNN + ";" + (t3 - t2));
-                System.out.println("KNN fin : " + accKNN + "%");
+
+                writer.printf(Locale.US, "%d;KNN;k=%d;%.2f;%d;%d\n",
+                        nbTrain, k, accKNN, tempsAppKNN, tempsPredKNN);
+                System.out.println("Terminé (Acc: " + accKNN + "%)");
 
                 writer.flush();
             }
+        } catch (Exception e) {
+            System.err.println("Erreur durant l'exécution : " + e.getMessage());
+            e.printStackTrace();
         }
-        System.out.println("\nfini dans :  " + csvFile);
+
+        System.out.println("\nfin");
     }
 }

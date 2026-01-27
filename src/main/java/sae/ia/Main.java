@@ -1,113 +1,114 @@
 package sae.ia;
 
-import sae.KNN.Algo.AlgoClassification;
+import java.io.IOException;
+
 import sae.KNN.Algo.KNN;
-import sae.KNN.Stats.Statistiques;
 import sae.KNN.chargement.ChargementMNIST;
 import sae.KNN.chargement.Donnees;
 import sae.KNN.chargement.Imagette;
 
-import java.io.IOException;
-
 public class Main {
-    static void main() throws IOException {
-        main2();
-    }
 
-    private static void extracted() {
-        int[] layer = new int[3];
-        layer[0] = 2;
-        layer[1] = 2;
-        layer[2] = 10;
+    // ======================= LES PARAMETRES =======================
 
+    private static final String MODE_DEFAUT = "mlp";
 
-        double[] ou1 = new double[]{0.0, 1.0, 0.0, 1.0};
-        double[] ou2 = new double[]{1.0, 0.0, 0.0, 1.0};
-        double[] ou3 = new double[]{0.0, 0.0, 1.0, 0.0};
-        double[] ou4 = new double[]{1.0, 1.0, 0.0, 1.0};
+    // KNN
+    private static final int K_KNN = 3;
+    private static final int NB_TRAIN_KNN = 10000;
 
-        double[][] tableOU = new double[4][];
-        tableOU[0] = ou1;
-        tableOU[1] = ou2;
-        tableOU[2] = ou3;
-        tableOU[3] = ou4;
+    // Données de test
+    private static final int NB_TEST = 100;
 
-        double[] et1 = new double[]{0.0, 1.0, 1.0, 0.0};
-        double[] et2 = new double[]{1.0, 0.0, 1.0, 0.0};
-        double[] et3 = new double[]{0.0, 0.0, 1.0, 0.0};
-        double[] et4 = new double[]{1.0, 1.0, 0.0, 1.0};
+    // MLP
+    private static final int NB_TRAIN_MLP = 10000;
+    private static final double LEARNING_RATE = 0.01;
+    private static final int[] COUCHES_MLP = {784,64, 10};
 
-        double[][] tableET = new double[4][];
-        tableET[0] = et1;
-        tableET[1] = et2;
-        tableET[2] = et3;
-        tableET[3] = et4;
+    public static void main(String[] args) {
+        String mode = (args.length > 0) ? args[0].toLowerCase() : MODE_DEFAUT;
 
-        double[] xor1 = new double[]{0.0, 1.0, 0.0, 1.0};
-        double[] xor2 = new double[]{1.0, 0.0, 0.0, 1.0};
-        double[] xor3 = new double[]{0.0, 0.0, 1.0, 0.0};
-        double[] xor4 = new double[]{1.0, 1.0, 1.0, 0.0};
-
-        double[][] tableXOR = new double[4][];
-        tableXOR[0] = xor1;
-        tableXOR[1] = xor2;
-        tableXOR[2] = xor3;
-        tableXOR[3] = xor4;
-
-        double[][] inputs = new double[4][2];
-        double[] input1 = new double[]{0, 0};
-        double[] input2 = new double[]{0, 1};
-        double[] input3 = new double[]{1, 0};
-        double[] input4 = new double[]{1, 1};
-
-        inputs[0] = input1;
-        inputs[1] = input2;
-        inputs[2] = input3;
-        inputs[3] = input4;
-
-
-        double seuil = 0.01;
-        TransferFunction transferFunction = new Sigmoide();
-        MLP mlp = new MLP(layer, 0.01, transferFunction);
-
-        //Apprentissage
-//        mlp.apprentissage(100000, tableXOR, seuil);
-
-
-        for (double[] input : inputs) {
-            double[] res = mlp.execute(input);
-            System.out.println(
-                    "Execute sur " + input[0] + " ; " + input[1] +
-                            " : [" + res[0] + ", " + res[1] + "]"
-            );
+        try {
+            if ("knn".equals(mode)) {
+                executerKNN();
+            } else {
+                executerMLP();
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur : " + e.getMessage());
         }
     }
 
-    public static void main2() throws IOException {
+    // ======================= KNN =======================
 
-        Donnees train = new Donnees("src/main/java/sae/KNN/train-images.idx3-ubyte", "src/main/java/sae/KNN/train-labels.idx1-ubyte");
-        Donnees test = new Donnees("src/main/java/sae/KNN/t10k-images.idx3-ubyte", "src/main/java/sae/KNN/t10k-labels.idx1-ubyte");
+    public static void executerKNN() throws IOException {
+        System.out.println("=== MODE : KNN (k=" + K_KNN + ") ===");
 
+        Donnees train = new Donnees("src/main/java/sae/KNN/train-images.idx3-ubyte", "src/main/java/sae/KNN/train-labels.idx1-ubyte",NB_TRAIN_KNN);
+        Imagette[] testImages = ChargementMNIST.charger("src/main/java/sae/KNN/t10k-images.idx3-ubyte","src/main/java/sae/KNN/t10k-labels.idx1-ubyte",NB_TEST);
 
-        int[] layer = new int[3];
-        layer[0] = 28 * 28;
-        layer[1] = 184;
-        layer[2] = 10;
+        KNN knn = new KNN(train, K_KNN);
 
-        double seuil = 0.01;
-        TransferFunction transferFunction = new TangenteH();
-        MLP mlp = new MLP(layer, 0.01, transferFunction);
+        long startTime = System.currentTimeMillis();
+        int compteurR = 0;
 
-        double resApp = mlp.apprentissageImg(10000, train, seuil);
-
-        double moy = 0;
-        for (int i = 0; i < train.getImagettes().length; i++) {
-            double[] input = flatten(train.getImagettes()[i]);
-            double[] res = mlp.execute(input);
-            check(train.getImagettes()[i].getLabel(), res);
+        System.out.println("Evaluation base de test ...");
+        for (int i = 0; i < testImages.length; i++) {
+            if (knn.predire(testImages[i]) == testImages[i].getLabel()) {
+                compteurR++;
+            }
         }
-        System.out.println(moy/1000);
+
+        long totalTime = System.currentTimeMillis() - startTime;
+        double accuracy = (double) compteurR / testImages.length * 100;
+
+        System.out.println("\n--- RESULTATS FINAUX KNN ---");
+        System.out.printf("Taux de réussite :" + accuracy + "\n");
+        System.out.println("Temps d'exécution : " + totalTime + " ms");
+        System.out.println("------------------------------\n");
     }
+
+    // ======================= MLP =======================
+
+    public static void executerMLP() throws IOException {
+        System.out.println("=== MODE : MLP (Sigmoide) ===");
+
+        Donnees train = new Donnees("src/main/java/sae/KNN/train-images.idx3-ubyte","src/main/java/sae/KNN/train-labels.idx1-ubyte");
+        Imagette[] testImages = ChargementMNIST.charger("src/main/java/sae/KNN/t10k-images.idx3-ubyte","src/main/java/sae/KNN/t10k-labels.idx1-ubyte",NB_TEST);
+
+        MLP mlp = new MLP(COUCHES_MLP, LEARNING_RATE, new Sigmoide());
+
+        long startTime = System.currentTimeMillis();
+
+        System.out.println("Apprentissage (" + NB_TRAIN_MLP + " images)...");
+        mlp.apprentissageImg(NB_TRAIN_MLP, train, LEARNING_RATE);
+
+        System.out.println("Evaluation base de test ...");
+        int reussites = 0;
+
+        for (int i = 0; i < testImages.length; i++) {
+            Imagette img = testImages[i];
+
+            double[] input = flatten(img);
+            double[] output = mlp.execute(input);
+
+            check(img.getLabel(), output);
+
+            if (getPrediction(output) == img.getLabel()) {
+                reussites++;
+            }
+        }
+
+        long totalTime = System.currentTimeMillis() - startTime;
+        double accuracy = (double) reussites / testImages.length * 100;
+
+        System.out.println("\n--- RÉSULTATS FINAUX MLP ---");
+        System.out.printf("Taux de réussite :" + accuracy + "\n");
+        System.out.println("Temps d'exécution : " + totalTime + " ms");
+        System.out.println("------------------------------\n");
+    }
+
+    // ======================= OUTILS TECHNIQUES =======================
 
     public static double[] flatten(Imagette image){
         int[][] img = image.getTab();
@@ -119,11 +120,20 @@ public class Main {
                 input[k++] = img[x][y] / 255.0;
             }
         }
-
         return input;
     }
 
-    public static void check(int expected, double[] actual){
+    public static int getPrediction(double[] output) {
+        int maxIndex = 0;
+        for (int i = 1; i < output.length; i++) {
+            if (output[i] > output[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    public static void check(int expected, double[] actual) {
         boolean trouve = false;
         for(int i = 0; i < actual.length; i++){
             if(actual[i] >= 0.90){

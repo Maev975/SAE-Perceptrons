@@ -14,4 +14,5 @@ public class Imagette {
     public int[][] getPixels() {
         return pixels;
     }
+    
 }

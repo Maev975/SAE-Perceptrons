@@ -1,0 +1,13 @@
+TailleTrain;Algo;Parametre;TauxReussite;TempsApprentissageMS;TempsPredictionMS
+5000;MLP_Tangente;64_caches;88.72;17826;234
+5000;MLP_sigmoide;128_caches;87.02;35632;449
+10000;MLP_Tangente;64_caches;90.68;35752;242
+10000;MLP_sigmoide;128_caches;89.80;71633;446
+15000;MLP_Tangente;64_caches;91.54;54079;233
+15000;MLP_sigmoide;128_caches;91.02;106704;443
+20000;MLP_Tangente;64_caches;91.88;71531;234
+20000;MLP_sigmoide;128_caches;91.94;142174;443
+25000;MLP_Tangente;64_caches;91.62;90229;235
+25000;MLP_sigmoide;128_caches;92.94;176145;444
+30000;MLP_Tangente;64_caches;92.34;107935;234
+30000;MLP_sigmoide;128_caches;93.46;208480;445

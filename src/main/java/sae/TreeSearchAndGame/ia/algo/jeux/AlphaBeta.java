@@ -1,88 +1,91 @@
 package sae.TreeSearchAndGame.ia.algo.jeux;
 
-import sae.TreeSearchAndGame.ia.framework.common.Action;
-import sae.TreeSearchAndGame.ia.framework.common.ActionValuePair;
-import sae.TreeSearchAndGame.ia.framework.common.State;
 import sae.TreeSearchAndGame.ia.framework.jeux.Game;
 import sae.TreeSearchAndGame.ia.framework.jeux.GameState;
 import sae.TreeSearchAndGame.ia.framework.jeux.Player;
+import sae.TreeSearchAndGame.ia.framework.common.Action;
+import sae.TreeSearchAndGame.ia.framework.common.ActionValuePair;
+import java.util.ArrayList;
 
 public class AlphaBeta extends Player {
-    /**
-     * Represente un joueur
-     *
-     * @param g          l'instance du jeux
-     * @param player_one si joueur 1
-     */
-    public AlphaBeta(Game g, boolean player_one) {
+
+    private int d;
+
+    public AlphaBeta(Game g, boolean player_one, int depth) {
         super(g, player_one);
+        this.d = depth;
     }
 
     @Override
     public Action getMove(GameState state) {
         ActionValuePair coup;
-        if(this.player == PLAYER1){
-            coup = maxValeur(state, Double.MIN_VALUE, Double.MAX_VALUE, 0);
-        }else{
-            coup = minValeur(state, Double.MIN_VALUE, Double.MAX_VALUE, 0);
+        if (this.player == PLAYER1) {
+            coup = maxValeur(state, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
+        } else {
+            coup = minValeur(state, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
         }
+
+        if (coup.getAction() == null) {
+            ArrayList<Action> actions = this.game.getActions(state);
+            return actions.get(0);
+        }
+
         return coup.getAction();
     }
 
-    public ActionValuePair maxValeur(GameState state, double alpha, double beta, int profondeur){
-        profondeur++;
-        if(game.endOfGame(state)){
+    private ActionValuePair maxValeur(GameState state, double alpha, double beta, int profondeur) {
+        this.incStateCounter();
+
+        if (state.isFinalState() || profondeur >= d) {
             return new ActionValuePair(null, state.getGameValue());
         }
-        if(profondeur == 3){
-//            return new ActionValuePair()
-        }
 
-        double V_MAX = Double.NEGATIVE_INFINITY;
-        Action C_MAX = game.getActions(state).getFirst();
+        double vMax = Double.NEGATIVE_INFINITY;
+        ArrayList<Action> actions = this.game.getActions(state);
+        Action cMax = actions.get(0);
 
-        for(Action a : this.game.getActions(state)){
-            State nextState = this.game.doAction(state, a);
-            ActionValuePair coup = minValeur((GameState) nextState, alpha, beta, profondeur);
-            if(coup.getValue() > V_MAX){
-                V_MAX = coup.getValue();
-                C_MAX = a;
+        for (Action a : actions) {
+            GameState nextState = (GameState) this.game.doAction(state, a);
+            ActionValuePair coup = minValeur(nextState, alpha, beta, profondeur + 1);
 
-                if(V_MAX > alpha){
-                    alpha = V_MAX;
-                }
-            }else if(V_MAX >= beta){
-                return new ActionValuePair(C_MAX, V_MAX);
+            if (coup.getValue() > vMax) {
+                vMax = coup.getValue();
+                cMax = a;
             }
-        }
 
-        return new ActionValuePair(C_MAX, V_MAX);
+            if (vMax >= beta) {
+                return new ActionValuePair(cMax, vMax);
+            }
+            alpha = Math.max(alpha, vMax);
+        }
+        return new ActionValuePair(cMax, vMax);
     }
 
-    public ActionValuePair minValeur(GameState state, double alpha, double beta, int profondeur){
-        profondeur++;
-        if(game.endOfGame(state)){
+    private ActionValuePair minValeur(GameState state, double alpha, double beta, int profondeur) {
+        this.incStateCounter();
+
+        if (state.isFinalState() || profondeur >= d) {
             return new ActionValuePair(null, state.getGameValue());
         }
 
-        double V_MIN = Double.MAX_VALUE;
-        Action C_MIN = game.getActions(state).getFirst();
+        double vMin = Double.POSITIVE_INFINITY;
+        ArrayList<Action> actions = this.game.getActions(state);
+        Action cMin = actions.get(0);
 
-        for(Action a : this.game.getActions(state)){
-            State nextState = this.game.doAction(state, a);
-            ActionValuePair coup = maxValeur((GameState) nextState, alpha, beta, profondeur);
-            if(coup.getValue() <= V_MIN){
-                V_MIN = coup.getValue();
-                C_MIN = a;
+        for (Action a : actions) {
+            GameState nextState = (GameState) this.game.doAction(state, a);
+            ActionValuePair coup = maxValeur(nextState, alpha, beta, profondeur + 1);
 
-                if(V_MIN < beta){
-                    beta = V_MIN;
-                }
-            }else if(V_MIN <= alpha){
-                return new ActionValuePair(C_MIN, V_MIN);
+            if (coup.getValue() < vMin) {
+                vMin = coup.getValue();
+                cMin = a;
             }
-        }
 
-        return new ActionValuePair(C_MIN, V_MIN);
+            if (vMin <= alpha) {
+                return new ActionValuePair(cMin, vMin);
+            }
+            beta = Math.min(beta, vMin);
+        }
+        return new ActionValuePair(cMin, vMin);
     }
 }

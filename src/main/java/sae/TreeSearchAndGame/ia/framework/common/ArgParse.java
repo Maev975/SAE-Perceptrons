@@ -239,11 +239,11 @@ public class ArgParse {
         case "human":
             return new HumanPlayer(game, is_p1);
         case "minmax":
-            return new MinMaxPlayer(game, is_p1);
-            //getValueOfParam(args, "-d", -1));
+            return new MinMaxPlayer(game, is_p1,
+                    getValueOfParam(args, "-d", -1));
             case "alphabeta":
-            return new AlphaBeta(game, is_p1);
-//            getValueOfParam(args, "-d", -1);
+            return new AlphaBeta(game, is_p1,
+                    getValueOfParam(args, "-d", -1));
         default :
             System.out.println("Joueur inconnu");
             usage();

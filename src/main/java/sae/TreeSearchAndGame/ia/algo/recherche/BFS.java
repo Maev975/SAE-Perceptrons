@@ -8,8 +8,10 @@ import sae.TreeSearchAndGame.ia.framework.recherche.TreeSearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Set;
 
 public class BFS extends TreeSearch {
 
@@ -29,29 +31,33 @@ public class BFS extends TreeSearch {
 
     @Override
     public boolean solve() {
-        SearchNode searchNode = SearchNode.makeRootSearchNode(this.initial_state);
-        this.noeudVisite = new ArrayList<>();
-        this.noeudExistant = new ArrayList<>();
-        this.noeudVisite.add(searchNode);
-        this.noeudExistant.add(searchNode);
-        SearchNode current = null;
 
-        while(noeudExistant != null && !noeudExistant.isEmpty()){
-            current = noeudExistant.getFirst();
-            noeudExistant.remove(current);
-            if(problem.isGoalState(current.getState())){
+        LinkedList<SearchNode> queue = new LinkedList<>();
+        Set<State> visited = new HashSet<>();
+
+        SearchNode root = SearchNode.makeRootSearchNode(initial_state);
+        queue.addLast(root);
+        visited.add(root.getState());
+
+        while (!queue.isEmpty()) {
+
+            SearchNode current = queue.removeFirst();
+            State currentState = current.getState();
+
+            if (problem.isGoalState(currentState)) {
                 this.end_node = current;
                 return true;
-            }else{
-                this.noeudVisite.add(current);
-                for(Action a : this.problem.getActions(current.getState())){
-                    State enfant = this.problem.doAction(current.getState(), a);
-                    if(problem.isGoalState(enfant)){
-                        this.end_node = SearchNode.makeChildSearchNode(this.problem, current, a);
-                        return true;
-                    }else if(!noeudExistant.contains(enfant) && !this.noeudVisite.contains(enfant)){
-                        noeudExistant.add(SearchNode.makeChildSearchNode(this.problem, current, a));
-                    }
+            }
+
+            for (Action a : problem.getActions(currentState)) {
+                SearchNode child =
+                        SearchNode.makeChildSearchNode(problem, current, a);
+
+                State childState = child.getState();
+
+                if (!visited.contains(childState)) {
+                    visited.add(childState);
+                    queue.addLast(child);
                 }
             }
         }

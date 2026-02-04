@@ -22,9 +22,9 @@ public class AStar extends TreeSearch {
         ArrayList<SearchNode> frontier = new ArrayList<>();
         Map<State, Double> bestG = new HashMap<>();
 
-        SearchNode root = SearchNode.makeRootSearchNode(this.initial_state);
+        SearchNode root = SearchNode.makeRootSearchNode(initial_state);
         frontier.add(root);
-        bestG.put(root.getState(), root.getCost());
+        bestG.put(root.getState(), 0.0);
 
         while (!frontier.isEmpty()) {
 
@@ -48,28 +48,29 @@ public class AStar extends TreeSearch {
                 return true;
             }
 
-            if (currentG <= bestG.getOrDefault(currentState, Double.MAX_VALUE)) {
+            if (currentG > bestG.getOrDefault(currentState, Double.MAX_VALUE)) {
+                continue;
+            }
 
-                bestG.put(currentState, currentG);
+            for (Action action : problem.getActions(currentState)) {
 
-                for (Action action : problem.getActions(currentState)) {
+                SearchNode child =
+                        SearchNode.makeChildSearchNode(problem, current, action);
 
-                    SearchNode child =
-                            SearchNode.makeChildSearchNode(problem, current, action);
+                State childState = child.getState();
+                double childG = child.getCost();
 
-                    State childState = child.getState();
-                    double childG = child.getCost();
+                double knownG =
+                        bestG.getOrDefault(childState, Double.MAX_VALUE);
 
-                    double knownG =
-                            bestG.getOrDefault(childState, Double.MAX_VALUE);
-
-                    if (childG < knownG) {
-                        frontier.add(child);
-                    }
+                if (childG < knownG) {
+                    bestG.put(childState, childG);
+                    frontier.add(child);
                 }
             }
         }
 
         return false;
     }
+
 }

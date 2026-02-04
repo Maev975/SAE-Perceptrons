@@ -3,23 +3,19 @@ package sae.TreeSearchAndGame.ia.problemes;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import sae.TreeSearchAndGame.ia.framework.common.Action;
-import sae.TreeSearchAndGame.ia.framework.common.State;
-import sae.TreeSearchAndGame.ia.framework.common.Misc;
-import sae.TreeSearchAndGame.ia.framework.jeux.GameState;
 
 /**
- * Représente un état d'un jeu générique m,n,k Game 
+ * Représente un état d'un jeu générique m,n,k Game
  */
 
 public class MnkGameState extends AbstractMnkGameState {
 
-   
+
     /**
      * Construire une grille vide de la bonne taille
      *
      * @param r nombre de lignes
-     * @param c nombre de colonnes 
+     * @param c nombre de colonnes
      */
     public MnkGameState(int r, int c, int s) {
         super(r,c,s);
@@ -35,16 +31,16 @@ public class MnkGameState extends AbstractMnkGameState {
         for (Pair p: this.winning_move)
             new_s.winning_move.add(p.clone());
         return new_s;
-	}
+    }
     /**
-     * Un fonction d'évaluation pour cet état du jeu. 
-     * Permet de comparer différents états dans le cas ou on ne  
+     * Un fonction d'évaluation pour cet état du jeu.
+     * Permet de comparer différents états dans le cas ou on ne
      * peut pas développer tout l'arbre. Le joueur 1 (X) choisira les
      * actions qui mènent au état de valeur maximal, Le joueur 2 (O)
      * choisira les valeurs minimal.
-     * 
+     *
      * Cette fonction dépend du jeu.
-     * 
+     *
      * @return la valeur du jeux
      **/
     /**
@@ -60,6 +56,8 @@ public class MnkGameState extends AbstractMnkGameState {
      *
      * @return la valeur du jeu
      **/
+
+    /** Ancienne version
     protected double evaluationFunction(){
 
         int pos_x = this.possibleLines(X);
@@ -67,8 +65,6 @@ public class MnkGameState extends AbstractMnkGameState {
 
         double value = pos_x-pos_o;
 
-        // System.out.println("Possibilities: X = "+pos_x+", O = "+pos_o+
-        //". Value = "+value);
         return value;
     }
 
@@ -84,15 +80,7 @@ public class MnkGameState extends AbstractMnkGameState {
     }
 
 
-    // compte le nombre de lignes verticales possibles pour player
     private int possibleVerticalLines(int player){
-
-        // une ligne possible pour player est un ligne :
-        // * vide
-        // * avec une seule pièce de player
-        // * avec deux pièces de player
-        // Si la ligne contient une pièce de l'adversaire
-        // elle n'est pas possible
 
         int res = 0;
         for(int c=0; c<this.cols; c++)
@@ -101,7 +89,7 @@ public class MnkGameState extends AbstractMnkGameState {
                 for(int k=0; k<this.streak; k++){
                     if( this.getValueAt(r+k,c) == this.otherPlayer(player) ) {
                         counter = 0;
-                        break; // plus besoin de continuer
+                        break;
                     }
                     else if( this.getValueAt(r+k,c) == player )
                         counter ++;
@@ -109,17 +97,13 @@ public class MnkGameState extends AbstractMnkGameState {
                         counter ++;
                 }
                 if( counter > 0 )
-                    res ++; // une ligne possible de plus
+                    res ++;
             }
 
-        //System.out.println("Possible vertical for "+ (char) player+ " : "+res);
         return res;
     }
 
-    // compte le nombre de lignes horizontales possibles pour player
     private int possibleHorizontalLines(int player){
-
-        // même raisonnement que pour les lignes verticales
 
         int res = 0;
         for(int r=0; r<this.rows;r++)
@@ -128,24 +112,22 @@ public class MnkGameState extends AbstractMnkGameState {
                 for(int k=0; k<this.streak; k++){
                     if( this.getValueAt(r,c+k) == this.otherPlayer(player) ) {
                         counter = 0;
-                        break; // plus besoin de continuer
+                        break;
                     }
                     else if( this.getValueAt(r,c+k) == player )
                         counter ++;
-                    else // vide
+                    else
                         counter ++;
                 }
                 if( counter > 0 )
-                    res ++; // une ligne possible de plus
+                    res ++;
             }
-        //System.out.println("Possible horizontal for "+ (char) player+ " : "+res);
         return res;
     }
 
     // compte le nombre de lignes diagonales possibles pour player
     private int possibleDiagonalLines(int player){
 
-        // même raisonnement que pour les lignes verticales
 
         int res = 0;
 
@@ -182,12 +164,79 @@ public class MnkGameState extends AbstractMnkGameState {
                         counter ++;
                 }
                 if( counter > 0 )
-                    res ++; // une ligne possible de plus
+                    res ++;
             }
-        //System.out.println("Possible diagonal for "+ (char) player+ " : "+res);
         return res;
     }
-    
 
-    
+
+**/
+
+    /** Nouvelle version **/
+    protected double evaluationFunction() {
+    if (this.isFinalState()) {
+        return this.getGameValue();
+    }
+
+    double totalScore = 0;
+// Évaluer les lignes
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c <= cols - streak; c++) {
+            totalScore += evalLine(r, c, 0, 1);
+        }
+    }
+// Évaluer les colonnes
+    for (int r = 0; r <= rows - streak; r++) {
+        for (int c = 0; c < cols; c++) {
+            totalScore += evalLine(r, c, 1, 0);
+        }
+    }
+
+ // Évaluer les diagonales descendantes
+    for (int r = 0; r <= rows - streak; r++) {
+        for (int c = 0; c <= cols - streak; c++) {
+            totalScore += evalLine(r, c, 1, 1);
+        }
+    }
+// Évaluer les diagonales montantes
+    for (int r = streak - 1; r < rows; r++) {
+        for (int c = 0; c <= cols - streak; c++) {
+            totalScore += evalLine(r, c, -1, 1);
+        }
+    }
+
+    return totalScore;
+}
+
+    /**
+     * Évalue une ligne spécifique sur le plateau.
+     * @param r : ligne de départ
+     * @param c : colonne de départ
+     * @param dr : direction ligne
+     * @param dc: direction colonne
+     * @return la valeur de la ligne
+     */
+    private double evalLine(int r, int c, int dr, int dc) {
+        int countP1 = 0;
+        int countP2 = 0;
+
+        // Compter les X et O dans la ligne
+        for (int i = 0; i < streak; i++) {
+            char val = getValueAt(r + (i * dr), c + (i * dc));
+            if (val == X) {
+                countP1++;
+            } else if (val == O) {
+                countP2++;
+            }
+        }
+
+
+        if (countP1 > 0 && countP2 > 0) return 0; // Ligne bloquée donc ne compte pas
+
+        if (countP1 > 0) return Math.pow(10, countP1); // Plus le nombre de pièces est grand, plus la valeur est élevée
+        if (countP2 > 0) return -Math.pow(10, countP2); // La même chose pour le joueur 2
+
+        return 0;
+    }
+
 }

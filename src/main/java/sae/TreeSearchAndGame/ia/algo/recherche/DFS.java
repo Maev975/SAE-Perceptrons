@@ -7,9 +7,7 @@ import sae.TreeSearchAndGame.ia.framework.recherche.SearchProblem;
 import sae.TreeSearchAndGame.ia.framework.recherche.TreeSearch;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 public class DFS extends TreeSearch {
 
@@ -27,38 +25,31 @@ public class DFS extends TreeSearch {
         this.frontier = new LinkedList<>();
     }
 
-
     @Override
     public boolean solve() {
+        SearchNode searchNode = SearchNode.makeRootSearchNode(this.initial_state);
+        this.noeudVisite = new ArrayList<>();
+        this.noeudExistant = new ArrayList<>();
+        this.noeudVisite.add(searchNode);
+        this.noeudExistant.addLast(searchNode);
+        SearchNode current = null;
 
-        LinkedList<SearchNode> stack = new LinkedList<>();
-        Set<State> visited = new HashSet<>();
-
-        SearchNode root = SearchNode.makeRootSearchNode(initial_state);
-        stack.addLast(root);
-
-        while (!stack.isEmpty()) {
-
-            SearchNode current = stack.removeLast();
-            State currentState = current.getState();
-
-            if (problem.isGoalState(currentState)) {
+        while(noeudExistant != null && !noeudExistant.isEmpty()){
+            current = noeudExistant.getLast();
+            noeudExistant.remove(current);
+            if(problem.isGoalState(current.getState())){
                 this.end_node = current;
                 return true;
-            }
-
-            if (visited.contains(currentState)) {
-                continue;
-            }
-
-            visited.add(currentState);
-
-            for (Action a : problem.getActions(currentState)) {
-                SearchNode child =
-                        SearchNode.makeChildSearchNode(problem, current, a);
-
-                if (!visited.contains(child.getState())) {
-                    stack.addLast(child);
+            }else{
+                this.noeudVisite.add(current);
+                for(Action a : this.problem.getActions(current.getState())){
+                    State enfant = this.problem.doAction(current.getState(), a);
+                    if(problem.isGoalState(enfant)){
+                        this.end_node = SearchNode.makeChildSearchNode(this.problem, current, a);
+                        return true;
+                    }else if(!noeudExistant.contains(enfant) && !this.noeudVisite.contains(enfant)){
+                        noeudExistant.addFirst(SearchNode.makeChildSearchNode(this.problem, current, a));
+                    }
                 }
             }
         }

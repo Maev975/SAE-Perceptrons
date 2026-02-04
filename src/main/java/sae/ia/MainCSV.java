@@ -19,10 +19,10 @@ public class MainCSV {
 
     public static void main(String[] args) throws IOException {
         //Paramètres
-        int[] taillesEntrainement = {500, 1000, 2000, 3000, 4000, 5000};
-        int nbTest = 500;
+        int[] taillesEntrainement = {5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000,55000, 60000};
+        int nbTest = 5000;
 
-        String csvFile = "resultats_comparaison.csv";
+        String csvFile = "resultats_comparaison-1c-melanger.csv";
 
         System.out.println("début");
 
@@ -30,15 +30,18 @@ public class MainCSV {
             writer.println("TailleTrain;Algo;Parametre;TauxReussite;TempsApprentissageMS;TempsPredictionMS");
 
             for (int nbTrain : taillesEntrainement) {
-                System.out.println("Test avec " + nbTrain + "images d'entrainement");
+                System.out.println("Test avec " + nbTrain + " images d'entrainement");
 
                 Donnees trainData = new Donnees(PATH_TRAIN_IMG, PATH_TRAIN_LBL, nbTrain);
                 Donnees testData = new Donnees(PATH_TEST_IMG, PATH_TEST_LBL, nbTest);
 
+                // Mélange des données d'entraînement
+                //trainData.melanger();
+
                 //MLP
-                System.out.print("MLP en cours");
-                int neuronesCaches = 128;
-                MLP mlp = new MLP(new int[]{784, neuronesCaches, 10}, 0.1, new Sigmoide());
+                System.out.print("MLP en cours tang");
+                int neuronesCaches = 64;
+                MLP mlp = new MLP(new int[]{784, neuronesCaches , 10}, 0.01, new TangenteH());
 
                 //temps apprentissage
                 long t0_MLP = System.currentTimeMillis();
@@ -52,12 +55,13 @@ public class MainCSV {
                 long t3_MLP = System.currentTimeMillis();
                 long tempsPredMLP = t3_MLP - t2_MLP;
 
-                writer.printf(Locale.US, "%d;MLP;%d_caches;%.2f;%d;%d\n",
+                writer.printf(Locale.US, "%d;MLP_Tangente;%d_caches;%.2f;%d;%d\n",
                         nbTrain, neuronesCaches, accMLP, tempsAppMLP, tempsPredMLP);
-                System.out.println("Terminé (Acc: " + accMLP + "%)");
+                System.out.println("\nTerminé (Acc: " + accMLP + "%)");
 
                 //knn
-                System.out.print("KNN en cours... ");
+                /* 
+                System.out.print("KNN en cours");
                 int k = 3;
 
                 //temps apprentissage donc presque null
@@ -81,7 +85,28 @@ public class MainCSV {
 
                 writer.printf(Locale.US, "%d;KNN;k=%d;%.2f;%d;%d\n",
                         nbTrain, k, accKNN, tempsAppKNN, tempsPredKNN);
-                System.out.println("Terminé (Acc: " + accKNN + "%)");
+                System.out.println("\nTerminé (Acc: " + accKNN + "%)");
+                */
+                System.out.print("MLP en cours sig");
+                int neuronesCaches2 = 128;
+                MLP mlp2 = new MLP(new int[]{784, neuronesCaches2,  10}, 0.01, new Sigmoide());
+
+                //temps apprentissage
+                long t0_MLP2 = System.currentTimeMillis();
+                mlp2.apprentissageImg(30, trainData, 0.001);
+                long t1_MLP2 = System.currentTimeMillis();
+                long tempsAppMLP2 = t1_MLP2 - t0_MLP2;
+
+                //temps prédiction
+                long t2_MLP2 = System.currentTimeMillis();
+                double accMLP2 = mlp2.evaluer(testData);
+                long t3_MLP2 = System.currentTimeMillis();
+                long tempsPredMLP2 = t3_MLP2 - t2_MLP2;
+
+                writer.printf(Locale.US, "%d;MLP_sigmoide;%d_caches;%.2f;%d;%d\n",
+                        nbTrain, neuronesCaches2, accMLP2, tempsAppMLP2, tempsPredMLP2);
+                System.out.println("\nTerminé (Acc: " + accMLP2 + "%)");
+
 
                 writer.flush();
             }

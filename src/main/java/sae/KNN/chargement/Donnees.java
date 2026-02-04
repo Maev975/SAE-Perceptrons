@@ -1,6 +1,7 @@
 package sae.KNN.chargement;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class Donnees {
     private Imagette[] imagettes;
@@ -17,6 +18,20 @@ public class Donnees {
      */
     public Donnees(String fichierImages, String fichierLabels, int nb) throws IOException {
         this.imagettes = ChargementMNIST.charger(fichierImages, fichierLabels, nb);
+    }
+
+    /**
+     * Mélange aléatoirement les imagettes (Fisher-Yates)
+     */
+    public void melanger() {
+        if (this.imagettes == null) return;
+        Random rnd = new Random();
+        for (int i = this.imagettes.length - 1; i > 0; i--) {
+            int j = rnd.nextInt(i + 1);
+            Imagette tmp = this.imagettes[i];
+            this.imagettes[i] = this.imagettes[j];
+            this.imagettes[j] = tmp;
+        }
     }
 
     /**

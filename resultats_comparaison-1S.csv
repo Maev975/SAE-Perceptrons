@@ -1,0 +1,13 @@
+TailleTrain;Algo;Parametre;TauxReussite;TempsApprentissageMS;TempsPredictionMS
+5000;MLP;0_caches;87.58;2884;46
+10000;MLP;0_caches;88.28;5634;44
+15000;MLP;0_caches;88.68;7885;42
+20000;MLP;0_caches;89.14;10494;42
+25000;MLP;0_caches;89.34;13164;41
+30000;MLP;0_caches;89.80;16181;42
+35000;MLP;0_caches;89.76;18188;45
+40000;MLP;0_caches;89.86;21620;43
+45000;MLP;0_caches;89.96;23843;41
+50000;MLP;0_caches;89.90;26723;45
+55000;MLP;0_caches;90.08;28778;44
+60000;MLP;0_caches;89.86;32866;41

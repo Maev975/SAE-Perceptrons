@@ -3,9 +3,9 @@ package sae.TreeSearchAndGame.ia.problemes;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-sae.TreeSearchAndGame.iaframework.common.Action;
-sae.TreeSearchAndGame.iaframework.common.State;
-sae.TreeSearchAndGame.iaframework.jeux.GameState;
+import sae.TreeSearchAndGame.ia.framework.common.Action;
+import sae.TreeSearchAndGame.ia.framework.common.State;
+import sae.TreeSearchAndGame.ia.framework.jeux.GameState;
 
 /**
  * Représente un état du jeu du Gomoku 

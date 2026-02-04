@@ -2,7 +2,7 @@ package sae.TreeSearchAndGame.ia.problemes;
 
 import sae.TreeSearchAndGame.ia.framework.common.Action;
 import sae.TreeSearchAndGame.ia.framework.common.State;
-sae.TreeSearchAndGame.iaframework.recherche.Problem;
+import sae.TreeSearchAndGame.ia.framework.recherche.Problem;
 
 /**
  * Représente le problème de notre robot aspirateur

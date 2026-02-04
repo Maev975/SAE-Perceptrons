@@ -2,7 +2,7 @@ package sae.TreeSearchAndGame.ia.problemes;
 
 import java.util.Arrays;
 
-sae.TreeSearchAndGame.iaframework.common.State;
+import sae.TreeSearchAndGame.ia.framework.common.State;
 
 
 /**
